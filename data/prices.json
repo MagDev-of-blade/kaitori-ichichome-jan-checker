@@ -1,12 +1,12 @@
 [
   {
     "jan": "4521329432786",
-    "name": "【MEGA】 ニンジャスピナー BOX",
+    "name": "商品名不明",
     "price": 0,
     "priceText": "要確認",
     "source": "買取一丁目",
-    "url": "https://www.1-chome.com/searchResult?query=4902370553024",
-    "fetchedAt": "2026-05-08T16:16:50.452271+09:00"
+    "url": "https://www.1-chome.com/searchResult?query=4521329432786",
+    "fetchedAt": "2026-05-08T16:27:30.320298+09:00"
   },
   {
     "jan": "4902370553031",
@@ -17,15 +17,6 @@
     "source": "買取一丁目",
     "url": "https://www.1-chome.com/searchResult?query=4902370553031",
     "fetchedAt": "2026-05-08T15:30:00+09:00"
-  },
-  {
-    "jan": "4521329432786",
-    "name": "商品名不明",
-    "price": 0,
-    "priceText": "要確認",
-    "source": "買取一丁目",
-    "url": "https://www.1-chome.com/searchResult?query=4521329432786",
-    "fetchedAt": "2026-05-08T16:16:50.726231+09:00"
   },
   {
     "jan": "4549292176315",
@@ -64,6 +55,15 @@
     "priceText": "要確認",
     "source": "買取一丁目",
     "url": "https://www.1-chome.com/searchResult?query=4902370535730",
-    "fetchedAt": "2026-05-08T16:16:50.880838+09:00"
+    "fetchedAt": "2026-05-08T16:27:30.755719+09:00"
+  },
+  {
+    "jan": "4902370553024",
+    "name": "商品名不明",
+    "price": 0,
+    "priceText": "要確認",
+    "source": "買取一丁目",
+    "url": "https://www.1-chome.com/searchResult?query=4902370553024",
+    "fetchedAt": "2026-05-08T16:27:29.420762+09:00"
   }
 ]
