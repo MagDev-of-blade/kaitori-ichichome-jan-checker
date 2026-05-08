@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>買取一丁目 JAN価格チェッカー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap');
+        body { font-family: 'Noto Sans JP', system-ui, sans-serif; }
+        .price { font-variant-numeric: tabular-nums; }
+        .jan-input { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        .result-card {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .barcode {
+            background-image: linear-gradient(90deg, #111 25%, transparent 25%, transparent 50%, #111 50%, #111 75%, transparent 75%);
+            background-size: 8px 100%;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200">
+    <!-- Navbar -->
+    <nav class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-lg sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-emerald-600 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-barcode text-white text-2xl"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-2xl tracking-tight">1丁目</span>
+                    <span class="font-semibold text-emerald-400">JANチェッカー</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-x-4 text-sm">
+                <a href="https://www.1-chome.com/" target="_blank" class="hover:text-emerald-400 transition-colors flex items-center gap-x-1.5">
+                    <i class="fa-solid fa-external-link-alt"></i>
+                    <span class="hidden sm:inline">公式サイト</span>
+                </a>
+                <a href="https://github.com/MagDev-of-blade/kaitori-ichichome-jan-checker" target="_blank" class="hover:text-emerald-400 transition-colors flex items-center gap-x-1.5">
+                    <i class="fa-brands fa-github"></i>
+                    <span class="hidden sm:inline">GitHub</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="max-w-screen-xl mx-auto px-6 pt-16 pb-12">
+        <div class="max-w-2xl">
+            <div class="inline-flex items-center gap-x-2 bg-zinc-900 px-4 py-1.5 rounded-3xl mb-6 border border-zinc-800">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-xs font-medium text-emerald-400">実際の価格をデモデータで再現</span>
+            </div>
+            
+            <h1 class="text-6xl font-bold tracking-tighter leading-none mb-4">
+                JANコードを<br>入力するだけで<br>
+                <span class="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">買取一丁目</span>の<br>価格がわかる
+            </h1>
+            <p class="text-xl text-zinc-400 max-w-md">
+                買取一丁目の最新買取価格を即座で参照。バーコードスキャナー作業に最適。
+            </p>
+            
+            <div class="flex items-center gap-x-4 mt-8">
+                <button onclick="document.getElementById('jan-input').focus()" 
+                        class="px-8 py-3.5 bg-white text-zinc-950 font-semibold rounded-3xl flex items-center gap-x-2 hover:bg-zinc-100 transition-all active:scale-[0.985]">
+                    <span>価格を検索する</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <a href="#popular" class="px-6 py-3.5 border border-zinc-700 hover:bg-zinc-900 rounded-3xl text-sm flex items-center gap-x-2 transition-colors">
+                    <span>人気商品を見る</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="max-w-screen-xl mx-auto px-6 pb-20">
+        <div class="max-w-xl mx-auto">
+            <!-- Search Card -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+                <div class="flex items-center gap-x-4 mb-6">
+                    <div class="w-14 h-14 bg-emerald-600/10 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-search text-emerald-500 text-3xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-semibold">JANコード検索</h2>
+                        <p class="text-sm text-zinc-500">13桁または8桁の数字を入力</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="flex-1 relative">
+                        <input id="jan-input" type="text" maxlength="13" 
+                               class="jan-input w-full bg-zinc-950 border border-zinc-700 focus:border-emerald-500 transition-colors text-2xl font-mono tracking-[4px] py-4 px-5 rounded-2xl outline-none placeholder:text-zinc-700"
+                               placeholder="4902370553024" 
+                               oninput="formatJAN(this)" onkeypress="if (event.key === 'Enter') searchPrice()">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-xs px-2 py-0.5 bg-zinc-800 rounded text-zinc-500">JAN</div>
+                    </div>
+                    <button onclick="searchPrice()" 
+                            class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 transition-all px-10 py-4 rounded-2xl font-semibold flex items-center justify-center gap-x-2 text-lg shadow-lg shadow-emerald-950">
+                        <i class="fa-solid fa-search"></i>
+                        <span>検索</span>
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-between mt-3 px-1">
+                    <div class="text-xs text-zinc-500 flex items-center gap-x-1">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span>8桁または13桁の数字のみ</span>
+                    </div>
+                    <button onclick="scanDemo()" class="text-xs flex items-center gap-x-1 text-emerald-400 hover:text-emerald-300">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>カメラデモ</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Card -->
+            <div id="result-card" class="hidden mt-6 bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden result-card">
+                <div class="p-8">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div id="result-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-3"></div>
+                            <h3 id="result-name" class="text-2xl font-semibold leading-tight pr-8"></h3>
+                            <div class="flex items-center gap-x-2 mt-1">
+                                <span class="text-xs text-zinc-500">JAN</span>
+                                <span id="result-jan" class="font-mono text-sm text-emerald-400"></span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-zinc-500">買取一丁目 価格</div>
+                            <div id="result-price" class="price text-5xl font-bold text-emerald-400 tabular-nums"></div>
+                            <div class="text-[10px] text-zinc-500">(税込)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t border-zinc-800 flex items-center justify-between text-sm">
+                        <div class="flex items-center gap-x-2">
+                            <i class="fa-solid fa-box text-emerald-500"></i>
+                            <span id="result-condition" class="text-zinc-400"></span>
+                        </div>
+                            <div class="text-xs text-zinc-500">最新更新: 今日</div>
+                    </div>
+                </div>
+                
+                <div class="bg-zinc-950 px-8 py-5 flex gap-3">
+                    <button onclick="openOfficialSite()" 
+                            class="flex-1 py-3 bg-white text-zinc-950 rounded-2xl font-semibold flex items-center justify-center gap-x-2 hover:bg-zinc-100 transition-all">
+                        <i class="fa-solid fa-external-link-alt"></i>
+                        <span>公式サイトで確認</span>
+                    </button>
+                    <button onclick="resetSearch()" 
+                            class="flex-1 py-3 border border-zinc-700 hover:bg-zinc-900 rounded-2xl font-medium flex items-center justify-center gap-x-2 transition-all">
+                        <span>新しい検索</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- No Result -->
+            <div id="no-result" class="hidden mt-6 bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center">
+                <i class="fa-solid fa-question-circle text-4xl text-zinc-700 mb-4"></i>
+                <h3 class="font-semibold text-xl mb-2">該当商品が見つかりませんでした</h3>
+                <p class="text-sm text-zinc-400 mb-6 max-w-xs mx-auto">デモデータにない商品です。実際の価格は公式サイトでご確認ください。</p>
+                <button onclick="openOfficialSite()" 
+                        class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 rounded-2xl text-sm font-medium flex items-center gap-x-2 mx-auto">
+                    <span>買取一丁目で検索する</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Popular Items -->
+        <div id="popular" class="max-w-4xl mx-auto mt-16">
+            <div class="flex items-end justify-between mb-6 px-1">
+                <div>
+                    <h2 class="text-2xl font-semibold">人気商品ィクセス</h2>
+                    <p class="text-sm text-zinc-500">クリックで即座検索</p>
+                </div>
+                <span class="text-xs px-3 py-1 bg-zinc-900 rounded-full text-zinc-500">DEMO</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="popular-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="max-w-xl mx-auto mt-12">
+            <div class="flex items-center justify-between mb-4 px-1">
+                <h3 class="font-semibold flex items-center gap-x-2">
+                    <i class="fa-solid fa-history text-emerald-500"></i> 
+                    <span>最近の検索</span>
+                </h3>
+                <button onclick="clearHistory()" class="text-xs text-zinc-500 hover:text-red-400 transition-colors"> クリア </button>
+            </div>
+            <div id="history-list" class="space-y-2">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-t border-zinc-800 py-8 text-center text-xs text-zinc-500">
+        <div class="max-w-screen-xl mx-auto px-6">
+            © 2026 Kaitori Ichichome JAN Checker • デモアプリケーション • 
+            <a href="https://www.1-chome.com/" class="hover:text-emerald-400">https://www.1-chome.com/</a>
+        </div>
+    </footer>
+
+    <script>
+        // Tailwind config
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#10b981');
+        }
+
+        // Mock price database (realistic demo data from public info)
+        const mockPrices = {
+            "4902370553024": {
+                name: "Nintendo Switch 2 日本語・国内専用",
+                price: 42500,
+                condition: "新品未使用"
+            },
+            "4902370553031": {
+                name: "Nintendo Switch 2 マリオカート ワールドセット 日本語・国内専用",
+                price: 52200,
+                condition: "新品未使用"
+            },
+            "4549292176315": {
+                name: "Canon EOS Kiss M2 ダブルズームキット [ブラック]",
+                price: 105000,
+                condition: "新品未使用"
+            },
+            "4548736143470": {
+                name: "SONY WF-1000XM5 ブラック",
+                price: 23000,
+                condition: "新品未使用"
+            },
+            "4549292189803": {
+                name: "Canon EOS R10 RF-S18-150 IS STM レンズキット",
+                price: 98000,
+                condition: "新品未使用"
+            },
+            "6921489902231": {
+                name: "Airdog X3D AIR-X3-H1B311 [マットブラック]",
+                price: 923000,
+                condition: "新品未使用"
+            }
+        };
+
+        let searchHistory = JSON.parse(localStorage.getItem('janHistory') || '[]');
+
+        function formatJAN(input) {
+            // Only allow numbers
+            input.value = input.value.replace(/[^0-9]/g, '');
+            // Limit to 13 digits
+            if (input.value.length > 13) input.value = input.value.slice(0, 13);
+        }
+
+        function updateHistory(jan, name, price) {
+            const entry = { jan, name, price, timestamp: Date.now() };
+            searchHistory = [entry, ...searchHistory.filter(e => e.jan !== jan)].slice(0, 5);
+            localStorage.setItem('janHistory', JSON.stringify(searchHistory));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            container.innerHTML = '';
+            
+            if (searchHistory.length === 0) {
+                container.innerHTML = `<div class="text-xs text-zinc-600 px-4 py-2">まだ検索履歴がありません</div>`;
+                return;
+            }
+            
+            searchHistory.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3 text-sm hover:border-zinc-700 cursor-pointer transition-all`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-8 h-8 bg-zinc-800 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-barcode text-emerald-500 text-xs"></i>
+                        </div>
+                        <div>
+                            <div class="font-mono text-emerald-400 text-xs">${item.jan}</div>
+                            <div class="text-xs text-zinc-400 line-clamp-1">${item.name}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-semibold text-emerald-400">¥${item.price.toLocaleString()}</div>
+                    </div>
+                `;
+                div.onclick = () => {
+                    document.getElementById('jan-input').value = item.jan;
+                    searchPrice();
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('検索履歴をクリアしますか？')) {
+                searchHistory = [];
+                localStorage.removeItem('janHistory');
+                renderHistory();
+            }
+        }
+
+        function showResult(jan, data) {
+            const resultCard = document.getElementById('result-card');
+            const noResult = document.getElementById('no-result');
+            
+            resultCard.classList.remove('hidden');
+            noResult.classList.add('hidden');
+            
+            document.getElementById('result-name').textContent = data.name;
+            document.getElementById('result-jan').textContent = jan;
+            document.getElementById('result-price').innerHTML = `¥${data.price.toLocaleString()}`;
+            document.getElementById('result-condition').textContent = data.condition;
+            
+            // Badge
+            const badge = document.getElementById('result-badge');
+            badge.innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> 買取一丁目 対応`;
+            badge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-900/50 text-emerald-400`;
+            
+            // Update history
+            updateHistory(jan, data.name, data.price);
+        }
+
+        function showNoResult() {
+            const resultCard = document.getElementById('result-card');
+            const noResult = document.getElementById('no-result');
+            
+            resultCard.classList.add('hidden');
+            noResult.classList.remove('hidden');
+        }
+
+        function searchPrice() {
+            const input = document.getElementById('jan-input');
+            const jan = input.value.trim();
+            
+            if (!jan || (jan.length !== 8 && jan.length !== 13)) {
+                alert('正しいJANコード（8桁または13桁の数字）を入力してください');
+                input.focus();
+                return;
+            }
+            
+            // Show loading state
+            const btns = document.querySelectorAll('button');
+            const originalTexts = [];
+            btns.forEach((btn, i) => {
+                originalTexts[i] = btn.innerHTML;
+                btn.disabled = true;
+                if (btn.onclick && btn.onclick.toString().includes('searchPrice')) {
+                    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> 検索中...`;
+                }
+            });
+            
+            setTimeout(() => {
+                // Reset buttons
+                btns.forEach((btn, i) => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalTexts[i] || btn.innerHTML;
+                });
+                
+                if (mockPrices[jan]) {
+                    showResult(jan, mockPrices[jan]);
+                } else {
+                    showNoResult();
+                }
+                
+                // Scroll to result
+                const resultEl = document.getElementById('result-card');
+                if (!resultEl.classList.contains('hidden')) {
+                    resultEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 650);
+        }
+
+        function resetSearch() {
+            document.getElementById('result-card').classList.add('hidden');
+            document.getElementById('no-result').classList.add('hidden');
+            document.getElementById('jan-input').value = '';
+            document.getElementById('jan-input').focus();
+        }
+
+        function openOfficialSite() {
+            window.open('https://www.1-chome.com/', '_blank');
+        }
+
+        function scanDemo() {
+            const input = document.getElementById('jan-input');
+            alert('📷 カメラスキャンデモです。
+
+実際のアプリではバーコードリーダーライブラリを使用します。
+
+デモとして人気JANを自動入力します。');
+            
+            // Demo: fill a popular JAN
+            const demoJans = Object.keys(mockPrices);
+            const randomJan = demoJans[Math.floor(Math.random() * demoJans.length)];
+            input.value = randomJan;
+            setTimeout(() => {
+                searchPrice();
+            }, 800);
+        }
+
+        function loadPopularItems() {
+            const container = document.getElementById('popular-grid');
+            container.innerHTML = '';
+            
+            Object.keys(mockPrices).forEach(jan => {
+                const data = mockPrices[jan];
+                const card = document.createElement('div');
+                card.className = `group bg-zinc-900 border border-zinc-800 hover:border-emerald-600/50 rounded-3xl p-5 cursor-pointer transition-all active:scale-[0.985]`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="w-9 h-9 bg-emerald-600/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-emerald-600/20 transition-colors">
+                            <i class="fa-solid fa-gamepad text-emerald-500"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[10px] text-emerald-500 font-mono">${jan}</div>
+                        </div>
+                    </div>
+                    <div class="font-semibold text-sm leading-tight line-clamp-2 mb-4 pr-2">${data.name}</div>
+                    
+                    <div class="flex items-baseline justify-between">
+                        <div>
+                            <span class="text-xs text-zinc-500">買取価格</span>
+                            <div class="price text-2xl font-bold text-emerald-400">¥${data.price.toLocaleString()}</div>
+                        </div>
+                        <button onclick="event.stopImmediatePropagation(); document.getElementById('jan-input').value='${jan}'; searchPrice();" 
+                                class="opacity-0 group-hover:opacity-100 transition-all px-3 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 rounded-xl">
+                            検索
+                        </button>
+                    </div>
+                `;
+                card.onclick = () => {
+                    document.getElementById('jan-input').value = jan;
+                    searchPrice();
+                };
+                container.appendChild(card);
+            });
+        }
+
+        function init() {
+            initTailwind();
+            
+            // Load popular items
+            loadPopularItems();
+            
+            // Render initial history
+            renderHistory();
+            
+            // Demo: prefill a popular one
+            setTimeout(() => {
+                const input = document.getElementById('jan-input');
+                if (!input.value) {
+                    // Optional: leave empty or set example
+                    // input.value = '4902370553024';
+                }
+            }, 1200);
+            
+            // Keyboard shortcut hint
+            console.log('%c[App] JAN Checker ready. Press / to focus input.', 'color:#666');
+            
+            // Global shortcut
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+                    e.preventDefault();
+                    document.getElementById('jan-input').focus();
+                }
+            });
+            
+            // Welcome toast (subtle)
+            setTimeout(() => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-zinc-900 border border-zinc-700 text-xs px-4 py-2 rounded-2xl flex items-center gap-x-2 shadow-xl';
+                toast.innerHTML = `<span class="text-emerald-400">✓</span> <span>デモデータで動作中です</span>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2800);
+            }, 4500);
+        }
+
+        // Boot app
+        window.onload = init;
+    </script>
+</body>
+</html>
