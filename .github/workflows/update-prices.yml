@@ -1,0 +1,41 @@
+name: Update Kaitori Ichichome Prices
+
+on:
+  schedule:
+    # 毎日 9時・15時・21時（JST）に自動実行
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch:   # 手動実行ボタンも表示する
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run price update script
+        run: python scripts/update_prices.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/prices.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: Update prices from 買取一丁目 ($(date +%Y-%m-%d))"
+            git push
+          fi
