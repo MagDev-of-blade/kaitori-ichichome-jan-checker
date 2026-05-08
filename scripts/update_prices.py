@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 TARGET_JANS = [
     "4902370553024",   # Nintendo Switch 2 例
     "4521329432786",
-    "4902370535730",
+    "4521329431932",
     # ここに追加したいJANを増やせます
 ]
 
