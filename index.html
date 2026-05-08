@@ -49,7 +49,7 @@
         <div class="max-w-2xl">
             <div class="inline-flex items-center gap-x-2 bg-zinc-900 px-4 py-1.5 rounded-3xl mb-6 border border-zinc-800">
                 <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span class="text-xs font-medium text-emerald-400">実際の価格をデモデータで再現</span>
+                <span class="text-xs font-medium text-emerald-400">デモ + 公式サイト連動</span>
             </div>
             
             <h1 class="text-6xl font-bold tracking-tighter leading-none mb-4">
@@ -57,7 +57,7 @@
                 <span class="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">買取一丁目</span>の<br>価格がわかる
             </h1>
             <p class="text-xl text-zinc-400 max-w-md">
-                買取一丁目の最新買取価格を即座で参照。バーコードスキャナー作業に最適。
+                デモデータ + 公式サイトで最新価格を即座確認
             </p>
             
             <div class="flex items-center gap-x-4 mt-8">
@@ -66,9 +66,6 @@
                     <span>価格を検索する</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
-                <a href="#popular" class="px-6 py-3.5 border border-zinc-700 hover:bg-zinc-900 rounded-3xl text-sm flex items-center gap-x-2 transition-colors">
-                    <span>人気商品を見る</span>
-                </a>
             </div>
         </div>
     </div>
@@ -115,7 +112,7 @@
                 </div>
             </div>
 
-            <!-- Result Card -->
+            <!-- Result Card (Mock) -->
             <div id="result-card" class="hidden mt-6 bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden result-card">
                 <div class="p-8">
                     <div class="flex justify-between items-start">
@@ -128,9 +125,8 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-xs text-zinc-500">買取一丁目 価格</div>
+                            <div class="text-xs text-zinc-500">買取一丁目 価格 (デモ)</div>
                             <div id="result-price" class="price text-5xl font-bold text-emerald-400 tabular-nums"></div>
-                            <div class="text-[10px] text-zinc-500">(税込)</div>
                         </div>
                     </div>
                     
@@ -144,10 +140,10 @@
                 </div>
                 
                 <div class="bg-zinc-950 px-8 py-5 flex gap-3">
-                    <button onclick="openOfficialSite()" 
+                    <button onclick="openOfficialSearch()" 
                             class="flex-1 py-3 bg-white text-zinc-950 rounded-2xl font-semibold flex items-center justify-center gap-x-2 hover:bg-zinc-100 transition-all">
                         <i class="fa-solid fa-external-link-alt"></i>
-                        <span>公式サイトで確認</span>
+                        <span>公式サイトで最新価格を確認</span>
                     </button>
                     <button onclick="resetSearch()" 
                             class="flex-1 py-3 border border-zinc-700 hover:bg-zinc-900 rounded-2xl font-medium flex items-center justify-center gap-x-2 transition-all">
@@ -156,13 +152,14 @@
                 </div>
             </div>
 
-            <!-- No Result -->
+            <!-- No Result + Official Link -->
             <div id="no-result" class="hidden mt-6 bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center">
                 <i class="fa-solid fa-question-circle text-4xl text-zinc-700 mb-4"></i>
-                <h3 class="font-semibold text-xl mb-2">該当商品が見つかりませんでした</h3>
-                <p class="text-sm text-zinc-400 mb-6 max-w-xs mx-auto">デモデータにない商品です。実際の価格は公式サイトでご確認ください。</p>
-                <button onclick="openOfficialSite()" 
-                        class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 rounded-2xl text-sm font-medium flex items-center gap-x-2 mx-auto">
+                <h3 class="font-semibold text-xl mb-2">デモデータにない商品です</h3>
+                <p class="text-sm text-zinc-400 mb-6 max-w-xs mx-auto">公式サイトで最新の買取価格を確認しましょう</p>
+                <button onclick="openOfficialSearch()" 
+                        class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-semibold flex items-center justify-center gap-x-2">
+                    <i class="fa-solid fa-external-link-alt"></i>
                     <span>買取一丁目で検索する</span>
                 </button>
             </div>
@@ -172,10 +169,9 @@
         <div id="popular" class="max-w-4xl mx-auto mt-16">
             <div class="flex items-end justify-between mb-6 px-1">
                 <div>
-                    <h2 class="text-2xl font-semibold">人気商品</h2>
+                    <h2 class="text-2xl font-semibold">人気商品デモ</h2>
                     <p class="text-sm text-zinc-500">クリックで即座検索</p>
                 </div>
-                <span class="text-xs px-3 py-1 bg-zinc-900 rounded-full text-zinc-500">DEMO</span>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="popular-grid">
@@ -200,16 +196,12 @@
 
     <footer class="border-t border-zinc-800 py-8 text-center text-xs text-zinc-500">
         <div class="max-w-screen-xl mx-auto px-6">
-            © 2026 Kaitori Ichichome JAN Checker • デモアプリケーション • 
+            © 2026 Kaitori Ichichome JAN Checker • デモアプリ • 
             <a href="https://www.1-chome.com/" class="hover:text-emerald-400">https://www.1-chome.com/</a>
         </div>
     </footer>
 
     <script>
-        function initTailwind() {
-            // Tailwind is already loaded via CDN
-        }
-
         const mockPrices = {
             "4902370553024": { name: "Nintendo Switch 2 日本語・国内専用", price: 42500, condition: "新品未使用" },
             "4902370553031": { name: "Nintendo Switch 2 マリオカート ワールドセット 日本語・国内専用", price: 52200, condition: "新品未使用" },
@@ -285,15 +277,20 @@
             document.getElementById('result-condition').textContent = data.condition;
             
             const badge = document.getElementById('result-badge');
-            badge.innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> 買取一丁目 対応`;
+            badge.innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> デモデータ`;
             badge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-900/50 text-emerald-400`;
             
             updateHistory(jan, data.name, data.price);
         }
 
-        function showNoResult() {
-            document.getElementById('result-card').classList.add('hidden');
-            document.getElementById('no-result').classList.remove('hidden');
+        function showNoResult(jan) {
+            const resultCard = document.getElementById('result-card');
+            const noResult = document.getElementById('no-result');
+            resultCard.classList.add('hidden');
+            noResult.classList.remove('hidden');
+            
+            // Store current JAN for the official button
+            window.currentJan = jan;
         }
 
         function searchPrice() {
@@ -307,27 +304,44 @@
                 return;
             }
             
-            // Save original button state
             const originalHTML = searchBtn.innerHTML;
-            const originalDisabled = searchBtn.disabled;
-            
-            // Loading state
             searchBtn.disabled = true;
             searchBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> 検索中...`;
             
             setTimeout(() => {
-                // Restore button
-                searchBtn.disabled = originalDisabled;
+                searchBtn.disabled = false;
                 searchBtn.innerHTML = originalHTML;
                 
                 if (mockPrices[jan]) {
                     showResult(jan, mockPrices[jan]);
-                    // Scroll to result
                     document.getElementById('result-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
-                    showNoResult();
+                    showNoResult(jan);
+                    // Automatically open official search for live data
+                    setTimeout(() => {
+                        if (confirm('公式サイトで最新価格を確認しますか？')) {
+                            openOfficialSearch();
+                        }
+                    }, 300);
                 }
             }, 650);
+        }
+
+        function openOfficialSearch() {
+            const jan = window.currentJan || document.getElementById('jan-input').value.trim();
+            // Open official search page - user can paste JAN if needed
+            window.open('https://www.1-chome.com/searchResult', '_blank');
+            
+            // Optional: Copy JAN to clipboard for convenience
+            if (jan) {
+                navigator.clipboard.writeText(jan).then(() => {
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-sm px-6 py-2 rounded-2xl flex items-center gap-x-2 shadow-xl';
+                    toast.innerHTML = `<span>JANコードをクリップボードにコピーしました</span>`;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 2200);
+                }).catch(() => {});
+            }
         }
 
         function resetSearch() {
@@ -335,10 +349,6 @@
             document.getElementById('no-result').classList.add('hidden');
             document.getElementById('jan-input').value = '';
             document.getElementById('jan-input').focus();
-        }
-
-        function openOfficialSite() {
-            window.open('https://www.1-chome.com/', '_blank');
         }
 
         function scanDemo() {
@@ -370,7 +380,7 @@
                     
                     <div class="flex items-baseline justify-between">
                         <div>
-                            <span class="text-xs text-zinc-500">買取価格</span>
+                            <span class="text-xs text-zinc-500">買取価格 (デモ)</span>
                             <div class="price text-2xl font-bold text-emerald-400">¥${data.price.toLocaleString()}</div>
                         </div>
                         <button onclick="event.stopImmediatePropagation(); document.getElementById('jan-input').value='${jan}'; searchPrice();" 
@@ -388,11 +398,9 @@
         }
 
         function init() {
-            initTailwind();
             loadPopularItems();
             renderHistory();
             
-            // Keyboard shortcut: press / to focus input
             document.addEventListener('keydown', (e) => {
                 if (e.key === '/' && document.activeElement.tagName === 'BODY') {
                     e.preventDefault();
@@ -400,10 +408,7 @@
                 }
             });
             
-            // Subtle welcome message
-            setTimeout(() => {
-                console.log('%c[App] JAN Checker ready ✓', 'color:#10b981');
-            }, 1000);
+            console.log('%c[App] JAN Checker ready ✓ - Official site integration enabled', 'color:#10b981');
         }
 
         window.onload = init;
