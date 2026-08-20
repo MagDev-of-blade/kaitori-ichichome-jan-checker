@@ -6,7 +6,7 @@
     "priceText": "要確認",
     "source": "買取一丁目",
     "url": "https://www.1-chome.com/searchResult?query=4521329432786",
-    "fetchedAt": "2026-08-20T09:32:49.338214+09:00"
+    "fetchedAt": "2026-08-20T15:23:56.841555+09:00"
   },
   {
     "jan": "4902370553031",
@@ -64,7 +64,7 @@
     "priceText": "要確認",
     "source": "買取一丁目",
     "url": "https://www.1-chome.com/searchResult?query=4902370553024",
-    "fetchedAt": "2026-08-20T09:32:48.714686+09:00"
+    "fetchedAt": "2026-08-20T15:23:56.565136+09:00"
   },
   {
     "jan": "4521329431932",
@@ -73,6 +73,6 @@
     "priceText": "要確認",
     "source": "買取一丁目",
     "url": "https://www.1-chome.com/searchResult?query=4521329431932",
-    "fetchedAt": "2026-08-20T09:32:49.982221+09:00"
+    "fetchedAt": "2026-08-20T15:23:57.106576+09:00"
   }
 ]
